@@ -1,21 +1,16 @@
-/// <reference types="vitest/config" />
-import { reactRouter } from "@react-router/dev/vite";
-import tailwindcss from "@tailwindcss/vite";
-import { defineConfig } from "vite";
 import { fileURLToPath } from "node:url";
+import { defineConfig } from "vitest/config";
 
+// Test-only config. The react-router vite plugin injects a JSX preamble that
+// breaks Vitest, so tests run against a minimal config with the same alias.
 export default defineConfig({
-  plugins: [tailwindcss(), reactRouter()],
   resolve: {
-    tsconfigPaths: true,
     alias: {
       "~": fileURLToPath(new URL("./app", import.meta.url)),
     },
   },
-  server: {
-    port: 3000,
-  },
   test: {
+    globals: true,
     environment: "jsdom",
     setupFiles: ["./vitest.setup.ts"],
     include: ["app/**/*.test.{ts,tsx}"],

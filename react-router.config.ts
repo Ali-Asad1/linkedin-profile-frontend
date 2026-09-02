@@ -1,7 +1,7 @@
 import type { Config } from "@react-router/dev/config";
 
 export default {
-  // Config options...
-  // Server-side render by default, to enable SPA mode set this to `false`
-  ssr: true,
+  // The app is a fully client-side search experience talking directly to the
+  // backend API from the browser, so server rendering is disabled.
+  ssr: false,
 } satisfies Config;
