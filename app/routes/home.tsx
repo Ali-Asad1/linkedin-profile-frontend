@@ -1,13 +1,13 @@
 import type { Route } from "./+types/home";
-import { Welcome } from "../welcome/welcome";
+import { Navigate } from "react-router";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
+    { title: "LinkedIn Search" },
+    { name: "description", content: "Search professional profiles by skills, titles and location." },
   ];
 }
 
 export default function Home() {
-  return <Welcome />;
+  return <Navigate to="/users/search" replace />;
 }
