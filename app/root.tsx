@@ -1,14 +1,37 @@
-import {
-  isRouteErrorResponse,
-  Links,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-} from "react-router";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
 
 import type { Route } from "./+types/root";
 import "./app.css";
+
+/**
+ * A fresh QueryClient per app instance. Defaults are tuned for this
+ * read-heavy search page: results are cached briefly and never refetched
+ * aggressively (individual queries may override).
+ */
+function createQueryClient() {
+  return new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 60_000,
+        gcTime: 5 * 60_000,
+        retry: 1,
+        refetchOnWindowFocus: false,
+      },
+    },
+  });
+}
+
+let browserQueryClient: QueryClient | undefined;
+function getQueryClient() {
+  if (typeof document === "undefined") {
+    return createQueryClient();
+  }
+  if (!browserQueryClient) {
+    browserQueryClient = createQueryClient();
+  }
+  return browserQueryClient;
+}
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -42,7 +65,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  const queryClient = getQueryClient();
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Outlet />
+    </QueryClientProvider>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
